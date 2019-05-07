@@ -50,8 +50,6 @@
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-window": "^1.8.1",
-    "react-window-infinite-loader": "^1.0.3"
+    "react-dom": "^16.8.6"
   }
 }
