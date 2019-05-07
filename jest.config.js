@@ -6,7 +6,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/scripts/setupTests.js'],
   testEnvironment: 'jsdom-global',
   testPathIgnorePatterns: ['/utils/'],
-  testRegex: 'src/.*(/__tests__/[^.]+.(?!integration)|\\.(test|spec))\\.tsx?$',
+  testRegex: 'src/.*(/__tests__/[^.]+.(?!integration)|\\.(test|spec))\\.jsx?$',
   transform: {
     '\\.tsx?$': 'babel-jest',
   },

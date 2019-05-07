@@ -1,0 +1,42 @@
+{
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 8,
+    "sourceType": "module"
+  },
+  "extends": [
+    "plugin:jest/recommended",
+    "plugin:react/recommended",
+    "eslint-config-prettier"
+  ],
+  "plugins": [
+    "jest",
+    "react",
+    "prettier"
+  ],
+  "rules": {
+    "arrow-parens": [2, "always"],
+    "import/extensions": [".js", ".json", ".jsx"],
+    "prettier/prettier": "error",
+    "quotes": [2, "single", {
+      "avoidEscape": true,
+      "allowTemplateLiterals": true
+    }],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".json", ".jsx"]
+      }
+    }
+  },
+  "env": {
+    "node": true,
+    "jest/globals": true
+  }
+}

@@ -42,7 +42,7 @@ module.exports = (env = {}) => ({
               compact: env.production,
               extends: './babel.config.js',
             },
-            test: /\.tsx?$/,
+            test: /\.jsx?$/,
           },
           // Process any JS outside of the app with Babel.
           // Unlike the application JS, only compile the standard ES features.
@@ -172,7 +172,7 @@ module.exports = (env = {}) => ({
     !env.production && new WebpackBar({ color: '#7cd638' }),
   ].filter(Boolean),
   resolve: {
-    extensions: ['.mjs', '.js', '.ts', '.tsx'],
+    extensions: ['.mjs', '.js', '.jsx'],
   },
   stats: 'errors-only',
 })

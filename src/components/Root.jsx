@@ -1,7 +1,7 @@
 import App from './App'
 import React, { StrictMode } from 'react'
 
-const Root = (): JSX.Element => (
+const Root = () => (
   <StrictMode>
     <App />
   </StrictMode>
