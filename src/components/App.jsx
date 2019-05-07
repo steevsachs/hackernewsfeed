@@ -1,5 +1,10 @@
+import FeedContainer from './FeedContainer'
 import React from 'react'
 
-const App = () => <div>A wild app appeared!</div>
+const App = () => (
+  <div>
+    <FeedContainer />
+  </div>
+)
 
 export default App

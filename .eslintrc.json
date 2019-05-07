@@ -3,29 +3,47 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 8,
+    "ecmaVersion": 9,
     "sourceType": "module"
   },
-  "extends": [
-    "plugin:jest/recommended",
-    "plugin:react/recommended",
-    "eslint-config-prettier"
-  ],
-  "plugins": [
-    "jest",
-    "react",
-    "prettier"
-  ],
+  "extends": ["plugin:jest/recommended", "plugin:react/recommended", "eslint-config-prettier"],
+  "plugins": ["jest", "prettier", "react", "react-hooks", "wyze"],
   "rules": {
     "arrow-parens": [2, "always"],
     "import/extensions": [".js", ".json", ".jsx"],
     "prettier/prettier": "error",
-    "quotes": [2, "single", {
-      "avoidEscape": true,
-      "allowTemplateLiterals": true
-    }],
-    "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error"
+    "quotes": [
+      2,
+      "single",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
+    "react/jsx-no-comment-textnodes": "warn",
+    "react/jsx-no-duplicate-props": ["warn", { "ignoreCase": true }],
+    "react/jsx-no-target-blank": "warn",
+    "react/jsx-no-undef": "error",
+    "react/jsx-pascal-case": [
+      "warn",
+      {
+        "allowAllCaps": true,
+        "ignore": []
+      }
+    ],
+    "react/jsx-uses-react": "warn",
+    "react/jsx-uses-vars": "warn",
+    "react/no-danger-with-children": "warn",
+    "react/no-direct-mutation-state": "warn",
+    "react/no-is-mounted": "warn",
+    "react/no-typos": "error",
+    "react/react-in-jsx-scope": "error",
+    "react/require-render-return": "error",
+    "react/style-prop-object": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "semi": [2, "never"],
+    "wyze/sort-imports": "error"
   },
   "settings": {
     "import/resolver": {
@@ -36,7 +54,7 @@
     }
   },
   "env": {
-    "node": true,
+    "browser": true,
     "jest/globals": true
   }
 }
