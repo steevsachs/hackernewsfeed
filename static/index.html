@@ -6,17 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Hacker News Feed</title>
     <link rel="shortcut icon" href="/assets/favicon.ico" />
+    <style>
+      body {
+        background-color: #1f1f1f;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // Check that service workers are registered
-      if ('serviceWorker' in navigator) {
-        // Use the window load event to keep the page load performant
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js');
-        });
-      }
-    </script>
+    <% if ( htmlWebpackPlugin.options.includeSw ) { %>
+      <script>
+        // Check that service workers are registered
+        if ('serviceWorker' in navigator) {
+          // Use the window load event to keep the page load performant
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+          })
+        }
+      </script>
+    <% } %>
   </body>
 </html>

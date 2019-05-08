@@ -1,7 +1,18 @@
+import { css } from 'emotion'
 import { filter, findIndex, map, mergeDeepRight, propEq, slice } from 'ramda'
 import { getDiffToNearest10, unionById, updateItemInPlace } from '../utils'
 import FeedList from './FeedList'
 import React, { useCallback, useEffect, useMemo, useReducer } from 'react'
+import commonStyles from '../styles'
+
+const styles = {
+  main: css({
+    height: 800,
+    margin: '36px !important',
+    minHeight: '800px !important',
+    width: 'calc(100vw - 72px) !important',
+  }),
+}
 
 const updateOrAddNewsItemById = (state, item) => {
   const { id } = item
@@ -170,12 +181,20 @@ const FeedContainer = () => {
   }, [state.newsItems])
 
   return (
-    <div>
-      <div>Poll Status: {pollStatus}</div>
-      <div>Showing {newsItems.length} items</div>
-      <div>Last polled: {new Date(lastPolled).toLocaleString()}</div>
-      <div>Last updated: {new Date(lastUpdated).toLocaleString()}</div>
+    <div className={styles.main}>
       <div>
+        <h2>
+          Hacker News Feed
+          <span className={commonStyles.date}>
+            Last polled: {new Date(lastPolled).toLocaleString()} |
+          </span>
+          <span className={commonStyles.date}>
+            Last updated: {new Date(lastUpdated).toLocaleString()}
+          </span>
+        </h2>
+      </div>
+      <div>
+        <h2 className={commonStyles.header}>Showing {newsItems.length} stories</h2>
         <FeedList
           fetchNewsItems={fetchNewsItems}
           newsItems={

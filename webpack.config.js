@@ -147,7 +147,7 @@ module.exports = (env = {}) => ({
         swSrc: './static/service-worker.js',
       }),
     new HtmlPlugin({
-      includeTracking: env.production,
+      includeSw: env.production,
       inject: true,
       template: './static/index.html',
       ...(env.production
