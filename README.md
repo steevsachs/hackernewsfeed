@@ -2,6 +2,8 @@
 
 > Feed of the latest stories from [Hacker News](https://news.ycombinator.com) using the [Hacker News API](https://github.com/HackerNews/API)
 
+A running demo is available at https://hackernewsfeed.steev.dev
+
 ## Run the app
 
 ```javascript

@@ -170,7 +170,8 @@ module.exports = (env = {}) => ({
     new InlineChunkHtmlPlugin(HtmlPlugin, [/runtime~.+[.]js/]),
     new CopyPlugin([{ from: './static/assets', to: 'assets' }]),
     // new CopyPlugin([{ from: './static/fonts', to: 'fonts' }]),
-    env.production && new CopyPlugin([{ from: './static/service-worker.js', to: 'service-worker.js' }]),
+    env.production &&
+      new CopyPlugin([{ from: './static/service-worker.js', to: 'service-worker.js' }]),
     /* new webpack.DefinePlugin({
       // Allow related services to be set at build time.
     }), */
