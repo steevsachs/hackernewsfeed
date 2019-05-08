@@ -4,6 +4,7 @@ const HtmlPlugin = require('html-webpack-plugin')
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const WebpackBar = require('webpackbar')
+const WorkboxPlugin = require('workbox-webpack-plugin')
 const webpack = require('webpack')
 
 const rootDir = resolve(__dirname)
@@ -14,7 +15,6 @@ module.exports = (env = {}) => ({
     allowedHosts: ['localhost'],
     historyApiFallback: true,
     host: 'localhost',
-    https: true,
     stats: 'errors-only',
   },
   devtool: env.production ? 'source-map' : 'cheap-module-source-map',
@@ -141,6 +141,11 @@ module.exports = (env = {}) => ({
       : !env.production && ((info) => resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
   },
   plugins: [
+    env.production &&
+      new WorkboxPlugin.InjectManifest({
+        globPatterns: ['*.html'],
+        swSrc: './static/service-worker.js',
+      }),
     new HtmlPlugin({
       includeTracking: env.production,
       inject: true,
@@ -164,7 +169,8 @@ module.exports = (env = {}) => ({
     }),
     new InlineChunkHtmlPlugin(HtmlPlugin, [/runtime~.+[.]js/]),
     new CopyPlugin([{ from: './static/assets', to: 'assets' }]),
-    new CopyPlugin([{ from: './static/fonts', to: 'fonts' }]),
+    // new CopyPlugin([{ from: './static/fonts', to: 'fonts' }]),
+    env.production && new CopyPlugin([{ from: './static/service-worker.js', to: '/' }]),
     /* new webpack.DefinePlugin({
       // Allow related services to be set at build time.
     }), */
