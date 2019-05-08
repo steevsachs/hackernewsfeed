@@ -1,13 +1,13 @@
-import { filter, findIndex, map, mergeDeepRight, mergeDeepWith, propEq, slice } from 'ramda'
-import { unionById, updateItemInPlace } from '../utils'
+import { filter, findIndex, map, mergeDeepRight, propEq, slice } from 'ramda'
+import { getDiffToNearest10, unionById, updateItemInPlace } from '../utils'
 import FeedList from './FeedList'
-import React, { useCallback, useEffect, useReducer } from 'react'
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react'
 
 const updateOrAddNewsItemById = (state, item) => {
   const { id } = item
   const indexToUpdate = findIndex(propEq('id', id), state.newsItems)
-  if (indexToUpdate === undefined) {
-    return mergeDeepWith(unionById, state, { newsItems: [item] })
+  if (indexToUpdate === -1) {
+    return { ...state, newsItems: [...state.newsItems, item] }
   }
 
   return {
@@ -20,10 +20,55 @@ const initialState = {
   newsItems: [],
   poll: {
     cache: [],
+    fetchingHistory: false,
     lastPolled: null,
     lastUpdated: null,
     status: 'idle',
   },
+}
+
+const makeGetNewsItem = (dispatch) => async ({ id }) => {
+  try {
+    dispatch({ payload: { id }, type: 'item/FETCH' })
+    const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+    const result = await response.json()
+    dispatch({ payload: { id, newsItem: result }, type: 'item/SET' })
+  } catch (e) {
+    dispatch({ payload: { id }, type: 'item/ERROR' })
+  }
+}
+
+const makePollHackerNews = (dispatch) => async () => {
+  try {
+    const response = await fetch('https://hacker-news.firebaseio.com/v0/newstories.json')
+    const result = await response.json()
+    dispatch({ payload: result, type: 'feed/POLL_SUCCESS' })
+  } catch (e) {
+    dispatch({ type: 'feed/POLL_ERROR' })
+  }
+}
+
+const makeGetOlderNewsItems = (dispatch) => async ({ latestId }) => {
+  const getItems = async (id, found = 0) => {
+    try {
+      const nextId = id - 1
+      const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${nextId}.json`)
+      const result = await response.json()
+      if (result.url && !result.parent) {
+        dispatch({ payload: { id: nextId, newsItem: result }, type: 'item/SET' })
+        if (found < 9) {
+          return await getItems(nextId, found + 1)
+        }
+      } else {
+        return await getItems(nextId, found)
+      }
+    } catch (e) {
+      return await getItems(id - 1, found)
+    }
+  }
+  dispatch({ type: 'feed/FETCH_OLDER' })
+  await getItems(latestId)
+  dispatch({ type: 'feed/FETCH_OLDER_SUCCESS' })
 }
 
 const transformToNewsItem = (id) => ({
@@ -43,6 +88,12 @@ const reducer = (state, action) => {
         poll: { ...state.poll, cache: newCache },
       }
     }
+    case 'feed/FETCH_OLDER': {
+      return mergeDeepRight(state, { poll: { fetchingHistory: true } })
+    }
+    case 'feed/FETCH_OLDER_SUCCESS': {
+      return mergeDeepRight(state, { poll: { fetchingHistory: false } })
+    }
     case 'feed/POLL': {
       return mergeDeepRight(state, {
         poll: { lastPolled: Date.now(), status: 'polling' },
@@ -55,7 +106,7 @@ const reducer = (state, action) => {
     }
     case 'feed/POLL_SUCCESS': {
       return mergeDeepRight(state, {
-        poll: { cache: action.payload, lastUpdated: Date.now(), status: 'idle' },
+        poll: { cache: slice(0, 100, action.payload), lastUpdated: Date.now(), status: 'idle' },
       })
     }
     case 'item/ERROR': {
@@ -82,36 +133,29 @@ const FeedContainer = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const {
     newsItems,
-    poll: { cache, lastPolled, lastUpdated, status: pollStatus },
+    poll: { cache, fetchingHistory, lastPolled, lastUpdated, status: pollStatus },
   } = state
   const cacheIsEmpty = cache.length === 0
 
-  const getNewsItem = async ({ id }) => {
-    try {
-      dispatch({ payload: { id }, type: 'item/FETCH' })
-      const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-      const result = await response.json()
-      dispatch({ payload: { id, newsItem: result }, type: 'item/SET' })
-    } catch (e) {
-      dispatch({ payload: { id }, type: 'item/ERROR' })
-    }
-  }
+  const getOlderNewsItems = useMemo(() => makeGetOlderNewsItems(dispatch), [dispatch])
+  const getNewsItem = useMemo(() => makeGetNewsItem(dispatch), [dispatch])
+  const latestId = useMemo(() => newsItems.length, [newsItems.length])
+  const pollHackerNews = useMemo(() => makePollHackerNews(dispatch), [dispatch])
 
-  const pollHackerNews = async () => {
-    try {
-      const response = await fetch('https://hacker-news.firebaseio.com/v0/newstories.json')
-      const result = await response.json()
-      dispatch({ payload: result, type: 'feed/POLL_SUCCESS' })
-    } catch (e) {
-      dispatch({ type: 'feed/POLL_ERROR' })
-    }
-  }
+  const fetchItems = useCallback(() => {
+    dispatch({ type: 'feed/FETCH_ITEMS' })
+  }, [])
 
-  const fetchNewsItems = useCallback(() => {
-    if (!cacheIsEmpty) {
-      dispatch({ type: 'feed/FETCH_ITEMS' })
+  const fetchItemsFromHistory = useCallback(() => {
+    if (fetchingHistory) {
+      return
     }
-  }, [cacheIsEmpty])
+
+    const latestNewsItem = newsItems[newsItems.length - 1]
+    latestNewsItem && getOlderNewsItems({ latestId: latestNewsItem.id })
+  }, [fetchingHistory, getOlderNewsItems, latestId, newsItems])
+
+  const fetchNewsItems = !cacheIsEmpty ? fetchItems : fetchItemsFromHistory
 
   useEffect(() => {
     dispatch({ type: 'feed/POLL' })
@@ -128,13 +172,23 @@ const FeedContainer = () => {
   return (
     <div>
       <div>Poll Status: {pollStatus}</div>
-      <div>
-        Showing {newsItems.length} out of {cache.length} items
-      </div>
+      <div>Showing {newsItems.length} items</div>
       <div>Last polled: {new Date(lastPolled).toLocaleString()}</div>
       <div>Last updated: {new Date(lastUpdated).toLocaleString()}</div>
       <div>
-        <FeedList fetchNewsItems={fetchNewsItems} newsItems={newsItems} />
+        <FeedList
+          fetchNewsItems={fetchNewsItems}
+          newsItems={
+            fetchingHistory
+              ? [
+                  ...newsItems,
+                  ...Array(getDiffToNearest10(newsItems.length)).fill({
+                    type: 'fetching-from-history',
+                  }),
+                ]
+              : [...newsItems, { type: 'placeholder' }] // placeholder ensures there are always more items below
+          }
+        />
       </div>
     </div>
   )

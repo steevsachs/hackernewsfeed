@@ -16,7 +16,7 @@ const FeedList = ({ fetchNewsItems, newsItems }) => {
   return (
     <InfiniteLoader
       isItemLoaded={isItemLoaded}
-      itemCount={newsItems.length + 10}
+      itemCount={newsItems.length + 50}
       loadMoreItems={loadMoreItems}
     >
       {({ onItemsRendered, ref }) => (

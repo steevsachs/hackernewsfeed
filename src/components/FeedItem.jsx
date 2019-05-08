@@ -1,13 +1,15 @@
 import { snakeToSpaces } from '../utils'
 import PropTypes from 'prop-types'
 import React from 'react'
+import cuid from 'cuid'
 
-const FeedItem = ({ data, id, type }) => {
+const FeedItem = ({ data, id = cuid(), type }) => {
   const error = () => <div key={id}>Error fetching {id}</div>
-  const fetching = () => <div key={id}>Fetching {id}</div>
+  const fetching = () => <div key={id}>Fetching...</div>
+  const fetchingFromHistory = () => <div key={id}>Fetching from history...</div>
   const notAsked = () => <div key={id}>Preparing to fetch {id}</div>
   const success = () => {
-    const { by, time, title, url } = data
+    const { by = 'anonymous', time, title, url } = data
     return (
       <div>
         <div>{snakeToSpaces(by)}</div>
@@ -25,6 +27,9 @@ const FeedItem = ({ data, id, type }) => {
     }
     case 'fetching': {
       return fetching()
+    }
+    case 'fetching-from-history': {
+      return fetchingFromHistory()
     }
     case 'success': {
       return data ? success() : fetching()
