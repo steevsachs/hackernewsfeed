@@ -117,7 +117,7 @@ const reducer = (state, action) => {
     }
     case 'feed/POLL_SUCCESS': {
       return mergeDeepRight(state, {
-        poll: { cache: slice(0, 100, action.payload), lastUpdated: Date.now(), status: 'idle' },
+        poll: { cache: action.payload, lastUpdated: Date.now(), status: 'idle' },
       })
     }
     case 'item/ERROR': {
