@@ -171,7 +171,7 @@ module.exports = (env = {}) => ({
     new CopyPlugin([{ from: './static/assets', to: 'assets' }]),
     // new CopyPlugin([{ from: './static/fonts', to: 'fonts' }]),
     env.production &&
-      new CopyPlugin([{ from: './static/service-worker.js', to: 'service-worker.js' }]),
+      new CopyPlugin([{ from: './static/service-worker.js', to: '' }]),
     /* new webpack.DefinePlugin({
       // Allow related services to be set at build time.
     }), */

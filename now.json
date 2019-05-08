@@ -4,10 +4,5 @@
   "name": "hackernewsfeed",
   "builds": [
     { "src": "package.json", "use": "@now/static-build", "config": { "distDir": "dist" } }
-  ],
-  "routes": [
-    { "src": "/assets/(.*)", "headers": { "cache-control": "s-maxage=31536000,immutable" }, "dest": "/assets/$1" },
-    { "src": "/js/(.*)", "headers": { "cache-control": "s-maxage=31536000,immutable" }, "dest": "/js/$1" },
-    { "src": "/(.*)", "headers": {"cache-control": "s-maxage=0"}, "dest": "/index.html" }
   ]
 }
