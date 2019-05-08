@@ -10,6 +10,7 @@
     "build": "NODE_ENV=production webpack --env.production --mode production",
     "dev": "NODE_ENV=development webpack-dev-server -w --hot --env",
     "lint": "eslint src",
+    "now-build": "yarn build",
     "pretest": "yarn lint",
     "prettier": "prettier --write \"{src,test-utils}/**/*.{js,jsx}\"",
     "start": "yarn dev",
