@@ -1,7 +1,7 @@
 import { filter, findIndex, map, mergeDeepRight, mergeDeepWith, propEq, slice } from 'ramda'
 import { unionById, updateItemInPlace } from '../utils'
-import FeedItem from './FeedItem'
-import React, { useEffect, useReducer } from 'react'
+import FeedList from './FeedList'
+import React, { useCallback, useEffect, useReducer } from 'react'
 
 const updateOrAddNewsItemById = (state, item) => {
   const { id } = item
@@ -84,6 +84,7 @@ const FeedContainer = () => {
     newsItems,
     poll: { cache, lastPolled, lastUpdated, status: pollStatus },
   } = state
+  const cacheIsEmpty = cache.length === 0
 
   const getNewsItem = async ({ id }) => {
     try {
@@ -106,6 +107,12 @@ const FeedContainer = () => {
     }
   }
 
+  const fetchNewsItems = useCallback(() => {
+    if (!cacheIsEmpty) {
+      dispatch({ type: 'feed/FETCH_ITEMS' })
+    }
+  }, [cacheIsEmpty])
+
   useEffect(() => {
     dispatch({ type: 'feed/POLL' })
     pollHackerNews().then(() => {
@@ -118,8 +125,6 @@ const FeedContainer = () => {
     map(getNewsItem, itemsToGet)
   }, [state.newsItems])
 
-  console.log(state)
-
   return (
     <div>
       <div>Poll Status: {pollStatus}</div>
@@ -129,26 +134,7 @@ const FeedContainer = () => {
       <div>Last polled: {new Date(lastPolled).toLocaleString()}</div>
       <div>Last updated: {new Date(lastUpdated).toLocaleString()}</div>
       <div>
-        {newsItems.map(({ data, id, type }) => {
-          switch (type) {
-            case 'error': {
-              return <div key={id}>Error fetching {id}</div>
-            }
-            case 'fetching': {
-              return <div key={id}>Fetching {id}</div>
-            }
-            case 'success': {
-              return (
-                <div key={id}>
-                  <FeedItem data={data} id={id} />
-                </div>
-              )
-            }
-            case 'not-yet-asked':
-            default:
-              return <div key={id}>Preparing to fetch {id}</div>
-          }
-        })}
+        <FeedList fetchNewsItems={fetchNewsItems} newsItems={newsItems} />
       </div>
     </div>
   )
