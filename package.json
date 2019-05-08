@@ -12,6 +12,7 @@
     "lint": "eslint src",
     "pretest": "yarn lint",
     "prettier": "prettier --write \"{src,test-utils}/**/*.{js,jsx}\"",
+    "start": "yarn dev",
     "test": "NODE_ENV=test jest"
   },
   "devDependencies": {
