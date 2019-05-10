@@ -3,6 +3,10 @@ const makeGetNewsItem = (dispatch) => async ({ id }) => {
     dispatch({ payload: { id }, type: 'item/FETCH' })
     const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
     const result = await response.json()
+    if (result === null) {
+      throw new Error()
+    }
+
     dispatch({ payload: { id, newsItem: result }, type: 'item/SET' })
   } catch (e) {
     dispatch({ payload: { id }, type: 'item/ERROR' })

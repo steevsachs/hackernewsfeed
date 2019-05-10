@@ -128,10 +128,10 @@ module.exports = (env = {}) => ({
   },
   output: {
     // There are also additional JS chunk files if you use code splitting.
-    chunkFilename: env.production ? 'js/[name].[chunkhash:8].chunk.js' : 'js/[name].chunk.js',
+    chunkFilename: 'js/[name].chunk.js',
     // There will be one main bundle, and one file per asynchronous chunk.
     // In development, it does not produce real files.
-    filename: env.production ? 'js/[name].[chunkhash:8].js' : 'js/bundle.js',
+    filename: 'js/bundle.js',
     path: env.production ? `${rootDir}/dist` : undefined,
     pathinfo: !env.production,
     publicPath: '/',
