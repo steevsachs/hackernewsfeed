@@ -1,5 +1,6 @@
 import { css } from 'emotion'
 import FeedContainer from './FeedContainer'
+import OfflineIndicator from './OfflineIndicator'
 import React from 'react'
 
 const styles = {
@@ -17,10 +18,13 @@ const styles = {
   }),
 }
 
-const App = () => (
-  <div className={styles.main}>
-    <FeedContainer />
-  </div>
-)
+const App = () => {
+  return (
+    <div className={styles.main}>
+      <OfflineIndicator />
+      <FeedContainer />
+    </div>
+  )
+}
 
 export default App

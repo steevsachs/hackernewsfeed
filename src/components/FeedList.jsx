@@ -58,13 +58,14 @@ const FeedList = ({ fetchNewsItems, newsItems }) => {
       isItemLoaded={isItemLoaded}
       itemCount={newsItems.length + 50}
       loadMoreItems={loadMoreItems}
+      threshold={25}
     >
       {({ onItemsRendered, ref }) => (
         <List
           className={styles.list}
-          height={800}
+          height={760}
           itemCount={newsItems.length}
-          itemSize={54}
+          itemSize={57}
           onItemsRendered={onItemsRendered}
           ref={ref}
         >

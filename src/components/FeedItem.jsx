@@ -18,7 +18,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'center',
     marginTop: 10,
-    minHeight: 44,
+    minHeight: 47,
     paddingLeft: '1em',
   }),
   title: css({
@@ -60,7 +60,7 @@ const FeedItem = ({ data, id = cuid(), type }) => {
         </div>
         <div>
           {snakeToSpaces(by)}
-          <span className={commonStyles.date}>{new Date(time).toLocaleString()}</span>
+          <span className={commonStyles.date}>{new Date(time * 1000).toLocaleString()}</span>
         </div>
       </div>
     )
